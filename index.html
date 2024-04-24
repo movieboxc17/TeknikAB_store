@@ -5,51 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gelato Shop</title>
     <style>
-        .product-item {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
+        /* Add your custom CSS styles here */
     </style>
 </head>
 <body>
-    <h1>Welcome to Gelato Shop</h1>
-    <div id="product-list"></div>
+    <header>
+        <h1>Welcome to the Gelato Shop</h1>
+    </header>
+    
+    <main>
+        <section id="products">
+            <!-- Product cards will be dynamically added here -->
+        </section>
+    </main>
 
     <script>
-        // Function to fetch products from Gelato API
-        async function fetchProducts() {
-            try {
-                const response = await fetch('https://gelatoapi.com/products', {
-                    headers: {
-                        'Authorization': 'Bearer c5419944-6cda-4c30-abc6-231c592b7912-7b66aeb4-a6f4-48b4-aa0d-6234931a57aa:c282ae25-fcc2-49d5-9b24-9c9c6f575e9c'
-                    }
-                });
-                const data = await response.json();
-                displayProducts(data);
-            } catch (error) {
-                console.error('Error fetching products:', error);
+        // Fetch products from Gelato API
+        const apiKey = "c5419944-6cda-4c30-abc6-231c592b7912-7b66aeb4-a6f4-48b4-aa0d-6234931a57aa:c282ae25-fcc2-49d5-9b24-9c9c6f575e9c";
+        const baseUrl = "https://order.gelatoapis.com/";
+
+        fetch(baseUrl + "products", {
+            headers: {
+                "Authorization": "Bearer " + apiKey
             }
-        }
-
-        // Function to display products on the page
-        function displayProducts(products) {
-            const productList = document.getElementById('product-list');
-            productList.innerHTML = ''; // Clear previous content
-            products.forEach(product => {
-                const productItem = document.createElement('div');
-                productItem.classList.add('product-item');
-                productItem.innerHTML = `
-                    <h3>${product.name}</h3>
-                    <p>${product.description}</p>
-                    <p>Price: $${product.price}</p>
+        })
+        .then(response => response.json())
+        .then(data => {
+            const productsContainer = document.getElementById("products");
+            data.products.forEach(product => {
+                const productCard = `
+                    <div class="product-card">
+                        <h2>${product.name}</h2>
+                        <img src="${product.image_url}" alt="${product.name}">
+                        <p>${product.description}</p>
+                        <p>Price: ${product.price}</p>
+                    </div>
                 `;
-                productList.appendChild(productItem);
+                productsContainer.innerHTML += productCard;
             });
-        }
-
-        // Fetch products when the page loads
-        window.onload = fetchProducts;
+        })
+        .catch(error => {
+            console.error("Error fetching products:", error);
+        });
     </script>
 </body>
 </html>
